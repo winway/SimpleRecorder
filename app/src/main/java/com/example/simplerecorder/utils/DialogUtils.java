@@ -13,7 +13,7 @@ import android.content.DialogInterface;
  **/
 public class DialogUtils {
 
-    public static void showPermissionGuideDialog(Context context, String title, String message
+    public static void showDialog(Context context, String title, String message
             , String positive, OnPositiveClickListener positiveClickListener
             , String negative, OnNegativeClickListener negativeClickListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);

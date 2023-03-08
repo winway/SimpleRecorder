@@ -25,7 +25,7 @@ public class PermissionUtils {
 
     private OnPermissionResultListener mOnPermissionResultListener;
 
-    public PermissionUtils() {
+    private PermissionUtils() {
     }
 
     public static PermissionUtils getInstance() {
@@ -83,7 +83,7 @@ public class PermissionUtils {
     }
 
     public void showPermissionGuideDialog(Activity context) {
-        DialogUtils.showPermissionGuideDialog(context, "提示信息", "权限缺失，请手动开启所需权限"
+        DialogUtils.showDialog(context, "提示信息", "权限缺失，请手动开启所需权限"
                 , "确定", new DialogUtils.OnPositiveClickListener() {
                     @Override
                     public void onPositiveClick() {
