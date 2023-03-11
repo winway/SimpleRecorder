@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/audio_detail"
+        android:title="详情" />
+    <item
+        android:id="@+id/audio_delete"
+        android:title="删除" />
+    <item
+        android:id="@+id/audio_rename"
+        android:title="重命名" />
+
+</menu>

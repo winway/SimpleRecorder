@@ -25,6 +25,7 @@ public class DialogUtils {
                         if (negativeClickListener != null) {
                             negativeClickListener.onNegativeClick();
                         }
+                        dialogInterface.cancel();
                     }
                 })
                 .setPositiveButton(positive, new DialogInterface.OnClickListener() {
@@ -33,6 +34,7 @@ public class DialogUtils {
                         if (positiveClickListener != null) {
                             positiveClickListener.onPositiveClick();
                         }
+                        dialogInterface.cancel();
                     }
                 }).create().show();
     }

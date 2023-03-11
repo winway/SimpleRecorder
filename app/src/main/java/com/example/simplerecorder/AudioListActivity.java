@@ -1,13 +1,23 @@
 package com.example.simplerecorder;
 
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.PopupMenu;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.simplerecorder.adapter.AudioListAdapter;
 import com.example.simplerecorder.bean.AudioBean;
 import com.example.simplerecorder.databinding.ActivityAudioListBinding;
+import com.example.simplerecorder.dialog.DetailDialog;
+import com.example.simplerecorder.dialog.RenameDialog;
 import com.example.simplerecorder.utils.AudioUtils;
+import com.example.simplerecorder.utils.DialogUtils;
+import com.example.simplerecorder.utils.FileUtils;
 import com.example.simplerecorder.utils.SDCardUtils;
 
 import java.io.File;
@@ -36,6 +46,104 @@ public class AudioListActivity extends AppCompatActivity {
         initAudioListAdapter();
 
         loadAudioList();
+
+        setupAudioListAdapter();
+    }
+
+    private void setupAudioListAdapter() {
+        mListAdapter.setOnPlayClickListener(new AudioListAdapter.OnPlayClickListener() {
+            @Override
+            public void OnPlayClick(AudioListAdapter audioListAdapter, View itemView, View playIV, int position) {
+
+            }
+        });
+
+        mBinding.audioListLv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                showPopupMenu(view, i);
+                return false;
+            }
+        });
+    }
+
+    private void showPopupMenu(View view, int i) {
+        PopupMenu popupMenu = new PopupMenu(this, view, Gravity.RIGHT);
+        MenuInflater inflater = popupMenu.getMenuInflater();
+        inflater.inflate(R.menu.audio_popup_menu, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.audio_detail:
+                        showDetailDialog(i);
+                        break;
+                    case R.id.audio_delete:
+                        deleteAudio(i);
+                        break;
+                    case R.id.audio_rename:
+                        showRenameDialog(i);
+                        break;
+                }
+                return false;
+            }
+        });
+        popupMenu.show();
+    }
+
+    private void showDetailDialog(int i) {
+        AudioBean audioBean = mListAdapterData.get(i);
+        DetailDialog dialog = new DetailDialog(this);
+        dialog.show();
+        dialog.setDialogSize();
+        dialog.setContent(audioBean);
+        dialog.setCanceledOnTouchOutside(false);
+    }
+
+    private void showRenameDialog(int i) {
+        AudioBean audioBean = mListAdapterData.get(i);
+        RenameDialog dialog = new RenameDialog(this, audioBean.getTitle());
+        dialog.show();
+        dialog.setDialogSize();
+        dialog.setOnOkClickListener(new RenameDialog.OnOkClickListener() {
+            @Override
+            public void onOkClick(String newName) {
+                renameAudio(newName, i);
+            }
+        });
+    }
+
+    private void renameAudio(String newName, int i) {
+        AudioBean audioBean = mListAdapterData.get(i);
+        if (audioBean.getTitle().equals(newName)) {
+            return;
+        }
+
+        String srcPath = audioBean.getPath();
+        String fileSuffix = audioBean.getFileSuffix();
+        File srcFile = new File(srcPath);
+        String newPath = srcFile.getParent() + File.separator + newName + fileSuffix;
+
+        FileUtils.renameFileByPath(srcPath, newPath);
+
+        audioBean.setTitle(newName);
+        audioBean.setPath(newPath);
+        mListAdapter.notifyDataSetChanged();
+    }
+
+    private void deleteAudio(int i) {
+        AudioBean audioBean = mListAdapterData.get(i);
+        String path = audioBean.getPath();
+        DialogUtils.showDialog(this, "提示信息", "确认删除文件吗？",
+                "确定", new DialogUtils.OnPositiveClickListener() {
+                    @Override
+                    public void onPositiveClick() {
+                        FileUtils.deleteFileByPath(path);
+                        mListAdapterData.remove(audioBean);
+                        mListAdapter.notifyDataSetChanged();
+                    }
+                },
+                "取消", null);
     }
 
     private void loadAudioList() {

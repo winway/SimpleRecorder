@@ -23,9 +23,15 @@ public class AudioListAdapter extends BaseAdapter {
     private Context mContext;
     private List<AudioBean> mData;
 
+    private OnPlayClickListener mOnPlayClickListener;
+
     public AudioListAdapter(Context context, List<AudioBean> data) {
         mContext = context;
         mData = data;
+    }
+
+    public void setOnPlayClickListener(OnPlayClickListener onPlayClickListener) {
+        mOnPlayClickListener = onPlayClickListener;
     }
 
     @Override
@@ -68,7 +74,22 @@ public class AudioListAdapter extends BaseAdapter {
             holder.mItemBinding.lvitemAudioPlayIv.setImageResource(R.mipmap.red_play);
         }
 
+        final View itemView = view;
+
+        holder.mItemBinding.lvitemAudioPlayIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mOnPlayClickListener != null) {
+                    mOnPlayClickListener.OnPlayClick(AudioListAdapter.this, itemView, view, i);
+                }
+            }
+        });
+
         return view;
+    }
+
+    public interface OnPlayClickListener {
+        void OnPlayClick(AudioListAdapter audioListAdapter, View itemView, View playIV, int position);
     }
 
     class ViewHolder {
