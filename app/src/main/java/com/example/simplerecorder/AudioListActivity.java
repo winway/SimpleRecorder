@@ -1,6 +1,11 @@
 package com.example.simplerecorder;
 
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -30,11 +35,35 @@ import java.util.List;
 import java.util.Locale;
 
 public class AudioListActivity extends AppCompatActivity {
+    private static final String TAG = "AudioListActivity";
 
     private ActivityAudioListBinding mBinding;
 
     private AudioListAdapter mListAdapter;
     private List<AudioBean> mListAdapterData;
+
+    private AudioService mAudioService;
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            AudioService.AudioBinder audioBinder = (AudioService.AudioBinder) iBinder;
+            mAudioService = audioBinder.getService();
+            mAudioService.setPlayList(mListAdapterData);
+            Log.i(TAG, "onServiceConnected: ");
+            mAudioService.setOnChangeAudioListener(new AudioService.OnChangeAudioListener() {
+                @Override
+                public void onChangeAudio(int position) {
+                    mListAdapter.notifyDataSetChanged();
+                }
+            });
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,13 +77,30 @@ public class AudioListActivity extends AppCompatActivity {
         loadAudioList();
 
         setupAudioListAdapter();
+
+        Intent intent = new Intent(this, AudioService.class);
+        bindService(intent, mConnection, BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(mConnection);
     }
 
     private void setupAudioListAdapter() {
         mListAdapter.setOnPlayClickListener(new AudioListAdapter.OnPlayClickListener() {
             @Override
             public void OnPlayClick(AudioListAdapter audioListAdapter, View itemView, View playIV, int position) {
-
+                for (int i = 0; i < mListAdapterData.size(); i++) {
+                    if (i != position) {
+                        mListAdapterData.get(i).setPlaying(false);
+                    }
+                }
+                boolean playing = mListAdapterData.get(position).isPlaying();
+                mListAdapterData.get(position).setPlaying(!playing);
+                mListAdapter.notifyDataSetChanged();
+                mAudioService.play(position);
             }
         });
 
@@ -141,6 +187,8 @@ public class AudioListActivity extends AppCompatActivity {
                         FileUtils.deleteFileByPath(path);
                         mListAdapterData.remove(audioBean);
                         mListAdapter.notifyDataSetChanged();
+
+                        mAudioService.setPlayList(mListAdapterData);
                     }
                 },
                 "取消", null);

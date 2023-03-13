@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/notify_audio_logo_iv"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@mipmap/icon_app_logo" />
+
+    <TextView
+        android:id="@+id/notify_audio_title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@id/notify_audio_logo_iv"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        tools:text="aaaaaaaaaa" />
+
+    <TextView
+        android:id="@+id/notify_audio_duration_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/notify_audio_title_tv"
+        android:layout_alignStart="@id/notify_audio_title_tv"
+        android:textColor="@color/black"
+        tools:text="aaaaaaaa" />
+
+    <ImageView
+        android:id="@+id/notify_audio_close_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:src="@mipmap/ic_error" />
+
+    <ImageView
+        android:id="@+id/notify_audio_next_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/notify_audio_logo_iv"
+        android:layout_toStartOf="@id/notify_audio_close_iv"
+        android:src="@mipmap/icon_next" />
+
+    <ImageView
+        android:id="@+id/notify_audio_play_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/notify_audio_next_iv"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_toStartOf="@id/notify_audio_next_iv"
+        android:src="@mipmap/red_play" />
+
+    <ImageView
+        android:id="@+id/notify_audio_prev_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/notify_audio_logo_iv"
+        android:layout_toStartOf="@id/notify_audio_play_iv"
+        android:src="@mipmap/icon_last" />
+
+</RelativeLayout>
