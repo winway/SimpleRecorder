@@ -20,4 +20,12 @@ public class LaunchSystemActivityUtils {
         intent.setData(uri);
         context.startActivity(intent);
     }
+
+    public static void launchHome(Activity context) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        context.startActivity(intent);
+    }
 }

@@ -18,10 +18,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SimpleRecorder"
         tools:targetApi="32">
+        <activity
+            android:name=".RecordActivity"
+            android:exported="false" />
+
         <service
             android:name=".AudioService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
 
         <activity
             android:name=".AudioListActivity"

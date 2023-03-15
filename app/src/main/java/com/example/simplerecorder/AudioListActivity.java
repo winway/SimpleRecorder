@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +24,7 @@ import com.example.simplerecorder.dialog.RenameDialog;
 import com.example.simplerecorder.utils.AudioUtils;
 import com.example.simplerecorder.utils.DialogUtils;
 import com.example.simplerecorder.utils.FileUtils;
+import com.example.simplerecorder.utils.LaunchSystemActivityUtils;
 import com.example.simplerecorder.utils.SDCardUtils;
 
 import java.io.File;
@@ -78,6 +80,15 @@ public class AudioListActivity extends AppCompatActivity {
 
         setupAudioListAdapter();
 
+        mBinding.audioListRecordIb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mAudioService.closeMediaPlayer();
+                startActivity(new Intent(AudioListActivity.this, RecordActivity.class));
+                finish();
+            }
+        });
+
         Intent intent = new Intent(this, AudioService.class);
         bindService(intent, mConnection, BIND_AUTO_CREATE);
     }
@@ -86,6 +97,15 @@ public class AudioListActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mConnection);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            LaunchSystemActivityUtils.launchHome(this);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     private void setupAudioListAdapter() {
@@ -125,6 +145,7 @@ public class AudioListActivity extends AppCompatActivity {
                         showDetailDialog(i);
                         break;
                     case R.id.audio_delete:
+                        mAudioService.closeMediaPlayer();
                         deleteAudio(i);
                         break;
                     case R.id.audio_rename:

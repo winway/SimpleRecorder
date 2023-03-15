@@ -205,6 +205,18 @@ public class AudioService extends Service implements MediaPlayer.OnCompletionLis
         updateNotification(mPlayPosition);
     }
 
+    private void pause() {
+        AudioBean audioBean = mPlayList.get(mPlayPosition);
+        if (mMediaPlayer.isPlaying()) {
+            mMediaPlayer.pause();
+            audioBean.setPlaying(false);
+        }
+
+        updateAudioListView(mPlayPosition);
+
+        updateNotification(mPlayPosition);
+    }
+
     public void updateAudioListView(int position) {
         if (mOnChangeAudioListener != null) {
             mOnChangeAudioListener.onChangeAudio(position);
@@ -216,6 +228,9 @@ public class AudioService extends Service implements MediaPlayer.OnCompletionLis
             @Override
             public void run() {
                 while (mShouldUpdateProgress) {
+                    if (mPlayList == null || mPlayList.size() < 1 || mPlayPosition > mPlayList.size() - 1) {
+                        break;
+                    }
                     long durationSeconds = mPlayList.get(mPlayPosition).getDurationSeconds();
                     int currentPosition = mMediaPlayer.getCurrentPosition();
                     int progress = (int) (currentPosition * 100 / durationSeconds);
@@ -231,6 +246,26 @@ public class AudioService extends Service implements MediaPlayer.OnCompletionLis
                 }
             }
         }).start();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mAudioReceiver != null) {
+            unregisterReceiver(mAudioReceiver);
+        }
+
+        closeMediaPlayer();
+    }
+
+    public void closeMediaPlayer() {
+        if (mMediaPlayer != null) {
+            setShouldUpdateProgress(false);
+            pause();
+            mNotificationManager.cancel(NOTIFICATION_ID_AUDIO);
+            mMediaPlayer.stop();
+            mPlayPosition = -1;
+        }
     }
 
     public interface OnChangeAudioListener {
@@ -250,12 +285,17 @@ public class AudioService extends Service implements MediaPlayer.OnCompletionLis
             String action = intent.getAction();
             switch (action) {
                 case ACTION_CLOSE:
+                    pause();
+                    mNotificationManager.cancel(NOTIFICATION_ID_AUDIO);
                     break;
                 case ACTION_PREV:
+                    playChange(mPlayPosition, mPlayPosition - 1 < 0 ? mPlayList.size() - 1 : mPlayPosition - 1);
                     break;
                 case ACTION_PLAY:
+                    pauseOrPlay();
                     break;
                 case ACTION_NEXT:
+                    playChange(mPlayPosition, mPlayPosition + 1 > mPlayList.size() - 1 ? 0 : mPlayPosition + 1);
                     break;
             }
         }
