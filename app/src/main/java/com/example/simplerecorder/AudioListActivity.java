@@ -230,8 +230,13 @@ public class AudioListActivity extends AppCompatActivity {
             }
         });
 
+        int audioFileLength = 0;
+        if (audioFiles != null) {
+            audioFileLength = audioFiles.length;
+        }
+
         AudioUtils audioUtils = AudioUtils.getInstance();
-        for (int i = 0; i < audioFiles.length; i++) {
+        for (int i = 0; i < audioFileLength; i++) {
             String id = i + "";
             File file = audioFiles[i];
             String name = file.getName();

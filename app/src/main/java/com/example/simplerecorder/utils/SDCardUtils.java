@@ -1,5 +1,6 @@
 package com.example.simplerecorder.utils;
 
+import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
@@ -15,7 +16,6 @@ import java.io.File;
 public class SDCardUtils {
     private static final String TAG = "SDCardUtils";
 
-    public static String sAppRootDirPath;
     public static String sAppAudioDirPath;
 
     private static SDCardUtils sSDCardUtils;
@@ -39,25 +39,25 @@ public class SDCardUtils {
         return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
     }
 
-    public File createAppRootDir() {
+    // https://www.jianshu.com/p/8235944e1497
+    // https://blog.csdn.net/a910626/article/details/51470866
+    public File createAppRootDir(Context context) {
         if (hasSDCard()) {
             Log.i(TAG, "createAppRootDir: ");
-            File sdDir = Environment.getExternalStorageDirectory();
-            File appDir = new File(sdDir, "simple_recorder");
+            File appDir = context.getExternalFilesDir("simple_recorder");
             if (!appDir.exists()) {
                 appDir.mkdir();
             }
 
-            sAppRootDirPath = appDir.getAbsolutePath();
             return appDir;
         }
 
         return null;
     }
 
-    public File createAppChildDir(String dir) {
+    public File createAppChildDir(String dir, Context context) {
         Log.i(TAG, "createAppChildDir: " + dir);
-        File rootDir = createAppRootDir();
+        File rootDir = createAppRootDir(context);
         if (rootDir != null) {
             File childDir = new File(rootDir, dir);
             if (!childDir.exists()) {

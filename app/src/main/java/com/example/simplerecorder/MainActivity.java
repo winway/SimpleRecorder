@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private PermissionUtils.OnPermissionResultListener mOnPermissionResultListener = new PermissionUtils.OnPermissionResultListener() {
         @Override
         public void onGranted() {
-            File audioDir = SDCardUtils.getInstance().createAppChildDir("audio");
+            File audioDir = SDCardUtils.getInstance().createAppChildDir("audio", getApplicationContext());
             SDCardUtils.sAppAudioDirPath = audioDir.getAbsolutePath();
 
             mHandler.sendEmptyMessageDelayed(MSG_COUNT_DOWN, 1000);

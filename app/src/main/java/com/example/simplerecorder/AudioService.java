@@ -1,6 +1,7 @@
 package com.example.simplerecorder;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -11,6 +12,7 @@ import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -78,7 +80,13 @@ public class AudioService extends Service implements MediaPlayer.OnCompletionLis
 
     private void initNotification() {
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        Notification.Builder builder = new Notification.Builder(this);
+        Notification.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            builder = new Notification.Builder(this, "winway");
+        } else {
+            builder = new Notification.Builder(this);
+        }
+
         builder.setSmallIcon(R.mipmap.icon_app_logo)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.icon_app_logo))
                 .setContent(mRemoteViews)
@@ -86,6 +94,12 @@ public class AudioService extends Service implements MediaPlayer.OnCompletionLis
                 .setOngoing(true)
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .setPriority(Notification.PRIORITY_HIGH);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("winway", "android10", NotificationManager.IMPORTANCE_DEFAULT);
+            mNotificationManager.createNotificationChannel(channel);
+        }
+
         mNotification = builder.build();
     }
 
@@ -136,7 +150,7 @@ public class AudioService extends Service implements MediaPlayer.OnCompletionLis
 
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
-
+        playChange(mPlayPosition, mPlayPosition + 1 > mPlayList.size() - 1 ? 0 : mPlayPosition + 1);
     }
 
     public void setPlayList(List<AudioBean> playList) {
@@ -206,6 +220,9 @@ public class AudioService extends Service implements MediaPlayer.OnCompletionLis
     }
 
     private void pause() {
+        if (mPlayPosition < 0) {
+            return;
+        }
         AudioBean audioBean = mPlayList.get(mPlayPosition);
         if (mMediaPlayer.isPlaying()) {
             mMediaPlayer.pause();

@@ -1,9 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/grey_200"
     tools:context=".RecordActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <RelativeLayout
+        android:id="@+id/record_top_rl"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <ImageView
+            android:id="@+id/record_back_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:onClick="onClick"
+            android:src="@mipmap/icon_back" />
+
+        <TextView
+            android:id="@+id/record_title_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="录音"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <com.carlos.voiceline.mylibrary.VoiceLineView
+        android:id="@+id/record_voiceline_VL"
+        android:layout_width="match_parent"
+        android:layout_height="260dp"
+        android:layout_below="@id/record_top_rl"
+        android:background="@android:color/white"
+        app:fineness="three"
+        app:maxVolume="200"
+        app:middleLine="@android:color/holo_red_light"
+        app:middleLineHeight="1dp"
+        app:sensibility="four"
+        app:viewMode="line"
+        app:voiceLine="@android:color/holo_red_light" />
+
+    <TextView
+        android:id="@+id/record_duration_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/record_voiceline_VL"
+        android:gravity="center"
+        android:padding="10dp"
+        android:textColor="@color/black"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        tools:text="11:11:11" />
+
+    <ImageView
+        android:id="@+id/record_stop_iv"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="5dp"
+        android:onClick="onClick"
+        android:src="@mipmap/red_stop" />
+
+
+</RelativeLayout>
