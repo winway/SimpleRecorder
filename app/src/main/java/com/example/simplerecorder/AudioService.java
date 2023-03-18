@@ -81,6 +81,7 @@ public class AudioService extends Service implements MediaPlayer.OnCompletionLis
     private void initNotification() {
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         Notification.Builder builder;
+        // https://blog.csdn.net/congcongguniang/article/details/105705271
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             builder = new Notification.Builder(this, "winway");
         } else {
